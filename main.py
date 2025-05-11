@@ -30,6 +30,24 @@ def handle_message_events(body, say, client):
         else:
             say(text="全員リアクション済みです！", thread_ts=ts)
 
+
+import threading
+from flask import Flask
+
+# FlaskでダミーのWebサーバーを動かす
+flask_app = Flask(__name__)
+
+@flask_app.route("/")
+def home():
+    return "Slack bot is running!"
+
+def start_flask():
+    flask_app.run(host="0.0.0.0", port=10000)
+
 if __name__ == "__main__":
+    # Flaskサーバーは別スレッドで
+    threading.Thread(target=start_flask).start()
+
+    # Slack Socket Mode
     handler = SocketModeHandler(app, os.environ["SLACK_APP_TOKEN"])
     handler.start()
